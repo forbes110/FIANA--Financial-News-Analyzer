@@ -1,0 +1,21 @@
+## models
+torch
+transformers
+datasets
+accelerate
+sentencepiece
+rouge
+spacy
+nltk
+ckiptagger
+tqdm
+pandas
+numpy
+jsonlines
+evaluate
+rouge_score
+scikit-learn
+textblob
+
+## crawler
+beautifulsoup4
