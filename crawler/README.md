@@ -1,11 +1,11 @@
 There would be websites two languages: English and Chinese.  
 
 ## Chinese:  
-玉山投信 [https://www.esunsec.com.tw/global/ETFWeb/HTML/ETReports.DJHTM](https://www.esunsec.com.tw/global/ETFWeb/HTML/ETReports.DJHTM). 
-金十數據 [https://xnews.jin10.com/53](https://xnews.jin10.com/53). 
-鉅亨網 [https://news.cnyes.com/news/cat/headline](https://news.cnyes.com/news/cat/headline).    
-yahoo [https://tw.stock.yahoo.com/news/](https://tw.stock.yahoo.com/news/). 
-野村投信 [https://www.moneydj.com/kmdj/common/listnewarticles.aspx?svc=RP&a=YA200.BFZICA](https://www.moneydj.com/kmdj/common/listnewarticles.aspx?svc=RP&a=YA200.BFZICA). 
+玉山投信 [https://www.esunsec.com.tw/global/ETFWeb/HTML/ETReports.DJHTM](https://www.esunsec.com.tw/global/ETFWeb/HTML/ETReports.DJHTM)   
+金十數據 [https://xnews.jin10.com/53](https://xnews.jin10.com/53)   
+鉅亨網 [https://news.cnyes.com/news/cat/headline](https://news.cnyes.com/news/cat/headline)         
+yahoo [https://tw.stock.yahoo.com/news/](https://tw.stock.yahoo.com/news/)   
+野村投信 [https://www.moneydj.com/kmdj/common/listnewarticles.aspx?svc=RP&a=YA200.BFZICA](https://www.moneydj.com/kmdj/common/listnewarticles.aspx?svc=RP&a=YA200.BFZICA)   
 
   
 ## English:  
