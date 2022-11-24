@@ -1,5 +1,5 @@
-# Stock-News-Analyzer
-
+# Financial-News-Analyzer
+    
 
 ## Coding style
 1. add this comment above each class and function definition to make others easy to understand.  
