@@ -1,0 +1,1 @@
+{ stock, crypto, future, forex, gold, fund, system, material, bond, estate }
