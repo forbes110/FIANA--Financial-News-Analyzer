@@ -1,0 +1,11 @@
+{
+  "additional_special_tokens": null,
+  "eos_token": "</s>",
+  "extra_ids": 0,
+  "name_or_path": "google/mt5-small",
+  "pad_token": "<pad>",
+  "sp_model_kwargs": {},
+  "special_tokens_map_file": "/root/.cache/huggingface/hub/models--google--mt5-small/snapshots/f03a52d3eaa650878b6f52e443bc4d5b385e786e/special_tokens_map.json",
+  "tokenizer_class": "T5Tokenizer",
+  "unk_token": "<unk>"
+}

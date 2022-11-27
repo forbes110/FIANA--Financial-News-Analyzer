@@ -1,4 +1,5 @@
 Summary   
+need to make the data with postfix"操作策略、報告" as test data
     - Chinese: IDEA-CCNL/Randeng-Pegasus-523M-Summary-Chinese   
     - English: google/flan-t5-xxl   
 QA answering   
