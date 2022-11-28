@@ -8,3 +8,10 @@ QA answering
 Word-Cloud + Words Frequency  
 Domain Classification.  
 Sentiment Analysis.  
+need to preprocess
+1. for QA answering   
+2. make the domain in our class {...}   
+3. make the sentiment score be regularized   
+
+
+
