@@ -23,23 +23,6 @@ summarization_name_mapping = {
     "wiki_summary": ("article", "highlights"),
 }
 
-def parse_args_dataset():
-    parser = argparse.ArgumentParser(description="Finetune a transformers model on a summarization task")
-    parser.add_argument(
-        "--raw_train_file", type=str, default='data/train.jsonl'
-    )
-    parser.add_argument(
-        "--raw_valid_file", type=str, default='data/public.jsonl'
-    )
-    parser.add_argument(
-        "--train_file", type=str, default='cache/_train_file.json'
-    )
-    parser.add_argument(
-        "--validation_file", type=str, default='cache/_valid_file.json'
-    )
-    args = parser.parse_args()
-    return args
-
 
 def parse_args_summary():
     parser = argparse.ArgumentParser(description="Finetune a transformers model on a summarization task")
@@ -61,26 +44,27 @@ def parse_args_summary():
         datasets
     '''
     parser.add_argument(
-        "--train_file", type=str, default='data/train.jsonl'
+        "--train_file", default='./data/train_file.json', type=str, 
     )
     parser.add_argument(
-        "--validation_file", type=str, default='data/public.jsonl'
+        "--validation_file", default='./data/valid_file.json', type=str, 
     )
     parser.add_argument(
-        "--test_file", type=str, default=None
+        "--test_file", default='./data/test_file.json', type=str, 
     )
-    '''
-        processed
-    '''
-    parser.add_argument(
-        "--_train_file", type=str, default='./cache/_train_file.json', help="A csv or a json file containing the training data."
-    )
-    parser.add_argument(
-        "--_validation_file", type=str, default='./cache/_valid_file.json', help="A csv or a json file containing the validation data."
-    )
-    parser.add_argument(
-        "--_test_file", type=str, default=None, help="A csv or a json file containing the testing data."
-    )
+
+    # '''
+    #     processed
+    # '''
+    # parser.add_argument(
+    #     "--_train_file", type=str, default='./cache/_train_file.json', help="A csv or a json file containing the training data."
+    # )
+    # parser.add_argument(
+    #     "--_validation_file", type=str, default='./cache/_valid_file.json', help="A csv or a json file containing the validation data."
+    # )
+    # parser.add_argument(
+    #     "--_test_file", type=str, default='./cache/_test_file.json', help="A csv or a json file containing the testing data."
+    # )
 
 
     '''
@@ -159,7 +143,7 @@ def parse_args_summary():
         ),
     )
     parser.add_argument("--top_k", type=int, default=None)
-    parser.add_argument("--top_p", type=int, default=None)
+    parser.add_argument("--top_p", type=float, default=None)
     parser.add_argument("--typical_p", type=float, default=None)
     parser.add_argument("--temperature", type=float, default=None)
     parser.add_argument("--do_sample", type=bool, default=None)
@@ -301,10 +285,10 @@ def parse_args_summary():
     else:
         if args.train_file is not None:
             extension = args.train_file.split(".")[-1]
-            assert extension in ["csv", "json", "jsonl"], "`train_file` should be a csv, json, or jsonline file."
+            assert extension in ["csv", "json"], "`train_file` should be a csv or json file."
         if args.validation_file is not None:
             extension = args.validation_file.split(".")[-1]
-            assert extension in ["csv", "json", "jsonl"], "`validation_file` should be a csv, json, or jsonline file." 
+            assert extension in ["csv", "json"], "`train_file` should be a csv or json file."
 
     if args.push_to_hub:
         assert args.output_dir is not None, "Need an `output_dir` to create a repo when `--push_to_hub` is passed."

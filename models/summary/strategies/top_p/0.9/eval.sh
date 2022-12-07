@@ -7,7 +7,7 @@ CUDA_VISIBLE_DEVICES=0 accelerate launch eval_summary.py \
 --per_device_eval_batch_size 2 \
 --gradient_accumulation_steps 8 \
 --no_repeat_ngram_size 2 \
---top_p 50 \
+--top_p 0.9 \
 --do_sample True \
 --source_prefix "summarize: " \
 --output_dir ./ckpt \

@@ -31,8 +31,9 @@ from transformers import (
     get_scheduler,
 )
 from transformers.utils import check_min_version, get_full_repo_name, is_offline_mode, send_example_telemetry
-from utils.config import parse_args_summary, summarization_name_mapping
-from utils.prepare_dataset import load_jsonlines_file, save_json
+from utils.config import parse_args_summary
+from prepare_dataset import load_jsonlines_file, save_json
+from transformers.optimization import Adafactor
 
 
 logger = get_logger(__name__)
@@ -50,9 +51,6 @@ except (LookupError, OSError):
 def main():
     args = parse_args_summary()
 
-    ## Initialize the accelerator. We will let the accelerator handle device placement for us in this example.
-    ## If we're using tracking, we also need to initialize it here and it will by default pick up all supported trackers
-    ## in the environment
     accelerator_log_kwargs = {}
 
     if args.with_tracking:
@@ -97,15 +95,6 @@ def main():
             os.makedirs(args.output_dir, exist_ok=True)
     accelerator.wait_for_everyone()
 
-    ## Get the datasets: you can either provide your own CSV/JSON/TXT training and evaluation files (see below)
-    ## or just provide the name of one of the public datasets available on the hub at https://huggingface.co/datasets/
-    ## (the dataset will be downloaded automatically from the datasets Hub).
-    ##
-    ## For CSV/JSON files, this script will use the column called 'text' or the first column if no column called
-    ## 'text' is found. You can easily tweak this behavior (see below).
-    ##
-    ## In distributed training, the load_dataset function guarantee that only one local process can concurrently
-    ## download the dataset.
 
     if args.dataset_name is not None:
 
@@ -115,19 +104,14 @@ def main():
         ''' jsonl need to be modified to json'''
         data_files = {}
         if args.test_file is not None:
-            _test_file = load_jsonlines_file(args.test_file)
-            save_json(args._test_file, _test_file)
-            data_files["test"] = args._test_file
+            # _test_file = load_jsonlines_file(args.test_file)
+            # save_json(args._test_file, _test_file)
+            data_files["test"] = args.test_file
         ## the file type
-        extension = args._test_file.split(".")[-1]
+        extension = args.test_file.split(".")[-1]
         raw_datasets = load_dataset(extension, data_files=data_files)
 
-    ## See more about loading any type of standard or custom dataset (from files, python dict, pandas DataFrame, etc) at
-    ## https://huggingface.co/docs/datasets/loading_datasets.html.
 
-    ## Load pretrained model and tokenizer
-    ## In distributed training, the .from_pretrained methods guarantee that only one local process can concurrently
-    ## download model & vocab.
     if args.config_name:
         config = AutoConfig.from_pretrained(args.config_name)
     elif args.model_name_or_path:
@@ -171,7 +155,7 @@ def main():
     column_names = raw_datasets["test"].column_names
 
     ## Get the column names for input/target.
-    dataset_columns = ["maintext", "title"]
+    dataset_columns = ["maintext"]
     if args.text_column is None:
         text_column = dataset_columns[0] if dataset_columns is not None else column_names[0]
     else:
@@ -180,14 +164,6 @@ def main():
             raise ValueError(
                 f"--text_column' value '{args.text_column}' needs to be one of: {', '.join(column_names)}"
             )
-    if args.summary_column is None:
-        summary_column = dataset_columns[1] if dataset_columns is not None else column_names[1]
-    else:
-        summary_column = args.summary_column
-        if summary_column not in column_names:
-            raise ValueError(
-                f"--summary_column' value '{args.summary_column}' needs to be one of: {', '.join(column_names)}"
-            )
 
     ## Temporarily set max_target_length for training.
     max_target_length = args.max_target_length
@@ -195,7 +171,6 @@ def main():
 
     def preprocess_function(examples):
         inputs = examples[text_column]
-        targets = examples[summary_column]
         inputs = [prefix + inp for inp in inputs]
         model_inputs = tokenizer(inputs, max_length=args.max_source_length, padding=padding, truncation=True)
         return model_inputs
@@ -218,13 +193,6 @@ def main():
     for index in random.sample(range(len(test_dataset)), 1):
         logger.info(f"Sample {index} of the training set: {test_dataset[index]}.")
 
-    # label_pad_token_id = -100 if args.ignore_pad_token_for_loss else tokenizer.pad_token_id
-    # data_collator = DataCollatorForSeq2Seq(
-    #     tokenizer,
-    #     model=model,
-    #     label_pad_token_id=label_pad_token_id,
-    #     pad_to_multiple_of=8 if accelerator.use_fp16 else None,
-    # )
 
     data_collator = DataCollatorForSeq2Seq(
         tokenizer,
@@ -258,11 +226,11 @@ def main():
             "weight_decay": 0.0,
         },
     ]
-    optimizer = torch.optim.Adafactor(optimizer_grouped_parameters, lr=args.learning_rate)
+    optimizer = Adafactor(optimizer_grouped_parameters, scale_parameter=False, relative_step=False, warmup_init=False, lr=args.learning_rate)
 
     ## Scheduler and math around the number of training steps.
     overrode_max_train_steps = False
-    num_update_steps_per_epoch = math.ceil(len(train_dataloader) / args.gradient_accumulation_steps)
+    num_update_steps_per_epoch = math.ceil(len(test_dataloader) / args.gradient_accumulation_steps)
     if args.max_train_steps is None:
         args.max_train_steps = args.num_train_epochs * num_update_steps_per_epoch
         overrode_max_train_steps = True
@@ -275,12 +243,12 @@ def main():
     )
 
     ## Prepare everything with our `accelerator`.
-    model, optimizer, train_dataloader, eval_dataloader, lr_scheduler = accelerator.prepare(
-        model, optimizer, train_dataloader, eval_dataloader, lr_scheduler
+    model, optimizer, test_dataloader, lr_scheduler = accelerator.prepare(
+        model, optimizer, test_dataloader, lr_scheduler
     )
 
     ## We need to recalculate our total training steps as the size of the training dataloader may have changed.
-    num_update_steps_per_epoch = math.ceil(len(train_dataloader) / args.gradient_accumulation_steps)
+    num_update_steps_per_epoch = math.ceil(len(test_dataloader) / args.gradient_accumulation_steps)
     if overrode_max_train_steps:
         args.max_train_steps = args.num_train_epochs * num_update_steps_per_epoch
     ## Afterwards we recalculate our number of training epochs
@@ -309,7 +277,15 @@ def main():
     gen_kwargs = {
         "max_length": args.val_max_target_length if args is not None else config.max_length,
         "num_beams": args.num_beams,
+        "do_sample": args.do_sample, 
+        "top_k": args.top_k, 
+        "top_p": args.top_p,
+        "typical_p": args.typical_p,
+        "temperature": args.temperature,
+        "repetition_penalty": args.repetition_penalty,
+        "no_repeat_ngram_size": args.no_repeat_ngram_size,
     }
+
 
     preds = []
     for epoch, batch in enumerate(tqdm(test_dataloader, total=len(test_dataloader), position=0, leave=True, ncols=100)):
@@ -334,13 +310,11 @@ def main():
             decoded_preds = postprocess_text(decoded_preds)
             preds.extend(decoded_preds)
             
-    with open(args.output_file, "w") as fp:
-        writer = csv.writer(fp)
-        writer.writerow(['title', 'id'])
-
+    with open(args.output_file, "w", encoding='utf-8') as fp:
         for i, test_id in enumerate(test_ids):
-            writer.writerow([preds[i],test_id])
-        logging.info(f"prediction file saved at {str(args.output_file.resolve())}")
+            json.dump({"title":preds[i],"id":test_id}, fp)
+            fp.write('\n')
+        print(f"prediction file saved at {str(Path(args.output_file).resolve())}")
 
 
 

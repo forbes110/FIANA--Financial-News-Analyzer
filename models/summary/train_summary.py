@@ -35,7 +35,6 @@ from transformers.utils.versions import require_version
 from utils.config import parse_args_summary, summarization_name_mapping
 from transformers.optimization import Adafactor, AdafactorSchedule
 from utils.metrics import get_rouge
-from utils.prepare_dataset import load_jsonlines_file, save_json
 
 logger = get_logger(__name__)
 
@@ -63,8 +62,8 @@ def main():
         accelerator_log_kwargs["logging_dir"] = args.output_dir
 
     ## need to add fp16
-    # accelerator = Accelerator(gradient_accumulation_steps=args.gradient_accumulation_steps, mixed_precision='fp16', **accelerator_log_kwargs)
-    accelerator = Accelerator(gradient_accumulation_steps=args.gradient_accumulation_steps, **accelerator_log_kwargs)
+    accelerator = Accelerator(gradient_accumulation_steps=args.gradient_accumulation_steps, mixed_precision='fp16', **accelerator_log_kwargs)
+    # accelerator = Accelerator(gradient_accumulation_steps=args.gradient_accumulation_steps, **accelerator_log_kwargs)
 
 
     ## Make one log on every process with the configuration for debugging.
@@ -114,17 +113,17 @@ def main():
     else:
         data_files = {}
         if args.train_file is not None:
-            _train_file = load_jsonlines_file(args.train_file)
-            save_json(args._train_file, _train_file)
-            data_files["train"] = args._train_file
+            # _train_file = load_jsonlines_file(args.train_file)
+            # save_json(args._train_file, _train_file)
+            data_files["train"] = args.train_file
 
         if args.validation_file is not None:
-            _validation_file = load_jsonlines_file(args.validation_file)
-            save_json(args._validation_file, _validation_file)
-            data_files["validation"] = args._validation_file
+            # _validation_file = load_jsonlines_file(args.validation_file)
+            # save_json(args._validation_file, _validation_file)
+            data_files["validation"] = args.validation_file
 
         ## the file type
-        extension = args._train_file.split(".")[-1]
+        extension = args.train_file.split(".")[-1]
         raw_datasets = load_dataset(extension, data_files=data_files)
 
 
@@ -158,6 +157,8 @@ def main():
         logger.info("Training new model from scratch")
         model = AutoModelForSeq2SeqLM.from_config(config)
 
+    print(model)
+
     ## resize the embeddings only when necessary to avoid index errors. 
     ## if need to create a model from scratch on a small vocab and want a smaller embedding size, remove this test.
     embedding_size = model.get_input_embeddings().weight.shape[0]
@@ -174,8 +175,8 @@ def main():
     column_names = raw_datasets["train"].column_names
 
 
-    dataset_columns = ["article", "highlights"]
-    # dataset_columns = ["maintext", "title"]
+    # dataset_columns = ["article", "highlights"]
+    dataset_columns = ["maintext", "title"]
 
 
     if args.text_column is None:
@@ -281,10 +282,10 @@ def main():
     ]
 
     ## AdamW
-    # optimizer = torch.optim.AdamW(optimizer_grouped_parameters, lr=args.learning_rate)
+    optimizer = torch.optim.AdamW(optimizer_grouped_parameters, lr=args.learning_rate)
 
     ## Adafactor
-    optimizer = Adafactor(optimizer_grouped_parameters, scale_parameter=False, relative_step=False, warmup_init=False, lr=args.learning_rate)
+    # optimizer = Adafactor(optimizer_grouped_parameters, scale_parameter=False, relative_step=False, warmup_init=False, lr=args.learning_rate)
 
     ## Scheduler and math around the number of training steps.
     overrode_max_train_steps = False
@@ -414,7 +415,7 @@ def main():
 
             if completed_steps >= args.max_train_steps:
                 break
-        print('total_loss:', total_loss)
+        # print('total_loss:', total_loss)
         
     ## 415-581
         '''

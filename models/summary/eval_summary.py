@@ -34,7 +34,7 @@ from transformers.optimization import Adafactor, AdafactorSchedule
 from transformers.utils import check_min_version, get_full_repo_name, is_offline_mode, send_example_telemetry
 from utils.config import parse_args_summary, summarization_name_mapping
 from utils.metrics import get_rouge
-from utils.prepare_dataset import load_jsonlines_file, save_json
+from prepare_dataset import load_jsonlines_file, save_json
 
 
 logger = get_logger(__name__)
@@ -111,12 +111,12 @@ def main():
         data_files = {}
     
         if args.validation_file is not None:
-            _validation_file = load_jsonlines_file(args.validation_file)
-            save_json(args._validation_file, _validation_file)
-            data_files["validation"] = args._validation_file
+            # _validation_file = load_jsonlines_file(args.validation_file)
+            # save_json(args._validation_file, _validation_file)
+            data_files["validation"] = args.validation_file
         
         ## the file type
-        extension = args._validation_file.split(".")[-1]
+        extension = args.validation_file.split(".")[-1]
         raw_datasets = load_dataset(extension, data_files=data_files)
 
     ## Load pretrained model and tokenizer
@@ -355,9 +355,9 @@ def main():
             labels = labels.cpu().numpy()
 
             if args.ignore_pad_token_for_loss:
-
                 ## Replace -100 in the labels as we can't decode them.
                 labels = np.where(labels != -100, labels, tokenizer.pad_token_id)
+
             if isinstance(generated_tokens, tuple):
                 generated_tokens = generated_tokens[0]
 
@@ -374,6 +374,8 @@ def main():
 
             predictions.extend(decoded_preds)
             references.extend(decoded_labels)
+            
+            rouge_score = get_rouge(predictions, references)
 
 
     pr_list = {
