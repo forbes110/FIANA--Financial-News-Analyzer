@@ -415,7 +415,7 @@ def main():
 
             if completed_steps >= args.max_train_steps:
                 break
-        # print('total_loss:', total_loss)
+        print('total_loss:', total_loss)
         
     ## 415-581
         '''
