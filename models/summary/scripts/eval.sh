@@ -1,4 +1,4 @@
-CUDA_VISIBLE_DEVICES=0 accelerate launch eval_summary.py \
+python3 eval_summary.py \
 --model_name_or_path ./ckpt \
 --per_device_train_batch_size 2 \
 --per_device_eval_batch_size 2 \

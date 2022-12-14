@@ -1,0 +1,12 @@
+{
+    "fund": 0,
+    "stock": 1,
+    "bond": 2,
+    "forex": 3,
+    "system": 4,
+    "estate": 5,
+    "material": 6,
+    "future": 7,
+    "gold": 8,
+    "crypto": 9
+}
