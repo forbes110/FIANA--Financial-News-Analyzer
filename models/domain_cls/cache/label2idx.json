@@ -1,12 +1,12 @@
 {
     "system": 0,
-    "forex": 1,
-    "gold": 2,
+    "crypto": 1,
+    "bond": 2,
     "estate": 3,
-    "future": 4,
-    "stock": 5,
-    "bond": 6,
-    "material": 7,
-    "fund": 8,
-    "crypto": 9
+    "forex": 4,
+    "future": 5,
+    "gold": 6,
+    "fund": 7,
+    "material": 8,
+    "stock": 9
 }
