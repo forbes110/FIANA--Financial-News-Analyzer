@@ -26,12 +26,13 @@
 import translators as ts
 from typing import str
 
-'''
-    function: api for translating english phrase to taiwanese
-    input: str, the english phrase need to be translated
-    output: str, the translated sentences in taiwanese
-'''
+
 def translate_en2tw(phrase) -> str:
+    '''
+        function: api for translating english phrase to taiwanese
+        input: str, the english phrase need to be translated
+        output: str, the translated sentences in taiwanese
+    '''
     return ts.google(phrase, from_language='en', to_language='zh-TW')
 
 ## check the translation result
