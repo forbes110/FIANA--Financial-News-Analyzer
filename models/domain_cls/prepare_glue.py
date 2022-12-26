@@ -6,7 +6,8 @@ from typing import Dict, List
 import logging
 
 def load_json_file(file_path):
-    with open(file_path, 'r') as f:
+    with open(file_path, 'r', encoding='utf-8') as f:
+    # with open(file_path, 'r') as f:
         return json.load(f)
 
 def label_json(file):
@@ -37,20 +38,13 @@ def clean_data(allData):
     no_domain_file = []
 
     for i, data in enumerate(allData):
+        del data['date_publish']
+        del data['url']
+        data['id'] = i
+        clean_file.append(data)
+    print(f"There are {len(clean_file)} clean file")
 
-        if data['maintext'] == "":
-            pass
-
-        ## not in source domain
-        if data['source_domain'] not in ['stock', 'crypto', 'future', 'forex', 'gold', 'fund', 'system', 'material', 'bond', 'estate']:
-            no_domain_file.append(data)
-
-        else:
-            data['id'] = i
-            clean_file.append(data)
-    print(f"There are {len(clean_file)} clean file and {len(no_domain_file)} no title files")
-
-    return clean_file, no_domain_file
+    return clean_file
 
 
 '''
@@ -61,7 +55,6 @@ def label2idx_save(args_pre):
     for split in ["raw_train_file", "raw_valid_file"]:
         dataset_path = Path(f"./cache/{split}.json")
         dataset = json.loads(dataset_path.read_text())
-
         intents.update({instance["source_domain"] for instance in dataset})
 
     intent2idx = {tag: i for i, tag in enumerate(intents)}
@@ -93,13 +86,15 @@ if __name__ == "__main__":
     ## label json
     train_file_, valid_file_ = label_json(train_file), label_json(valid_file)#, label_json(test_file)
 
-    news2idx = label2idx_save(args_pre)
+    # news2idx = label2idx_save(args_pre)
     news_idx_path = args_pre.cache_dir / "label2idx.json"
-    news2idx: Dict[str, int] = json.loads(news_idx_path.read_text())
+    news2idx: Dict[str, int] = json.loads(news_idx_path.read_text(encoding='utf-8'))
 
     train_file_, valid_file_ = encode_label_save(train_file_, news2idx), \
         encode_label_save(valid_file_, news2idx)#, encode_label_save(test_file_, news2idx)
-
+        
+    train_file_, valid_file_ = clean_data(train_file_), clean_data(valid_file_)
+    # f = open("data.txt","r",encoding="utf-8")
 
 
     save_json("./data/glue_train.json", train_file_)
@@ -109,11 +104,11 @@ if __name__ == "__main__":
 
     pp = pprint.PrettyPrinter(indent=4)
 
-    print('glue_train example:\n')
-    pp.pprint(train_file_[:1])
+    # print('glue_train example:\n')
+    # pp.pprint(train_file_[:1])
 
-    print('glue_valid example:\n')
-    pp.pprint(valid_file_[:1])
+    # print('glue_valid example:\n')
+    # pp.pprint(valid_file_[:1])
 
     # print('glue_test example:\n')
     # pp.pprint(test_file_[:1])
