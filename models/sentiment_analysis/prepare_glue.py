@@ -13,21 +13,16 @@ import json
 
 converter = OpenCC('s2t')
 raw_data = pd.read_csv("./data/raw_data.csv", encoding="utf-8")
-word = []
-for x in raw_data["word"]:
-    print(x)
-    word.append(converter.convert(x))
+text = raw_data["text"]
 label = raw_data['label']
 
 processed_data = []
-for e, i in enumerate(word):
+for e, i in enumerate(text):
     dic = {
         "id": e,
         "sentence": i,
-        "label": label[e]
+        "label": str(label[e])
     }
     processed_data.append(dic)
     
-converted_json = json.dumps(processed_data)
-with open("./data/processed_data.json", 'w') as f:
-    f.write(converted_json)
+converted_json = json.dump(processed_data, open("./data/processed_data.json", 'w', encoding='utf-8'), indent=4, ensure_ascii=False)
