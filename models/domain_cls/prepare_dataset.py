@@ -88,8 +88,8 @@ if __name__ == "__main__":
     
     train_data, valid_data = split_data(clean_file)
 
-    save_json('./data/raw_train_file.json', train_data)
-    save_json('./data/raw_valid_file.json', valid_data)
+    save_json('./cache/raw_train_file.json', train_data)
+    save_json('./cache/raw_valid_file.json', valid_data)
 
     print(f'File saved!')
 
