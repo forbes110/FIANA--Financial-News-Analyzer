@@ -1,5 +1,4 @@
 torch==1.12.1
-protobuf==3.20.1
 transformers==4.22.2
 datasets
 accelerate

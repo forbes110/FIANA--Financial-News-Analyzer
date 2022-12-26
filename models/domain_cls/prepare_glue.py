@@ -1,6 +1,6 @@
 import json
 import pprint
-from utils.config import parse_args_news, same_seeds
+from config import parse_args_news, same_seeds
 from pathlib import Path
 from typing import Dict, List
 import logging
@@ -53,13 +53,15 @@ def clean_data(allData):
     return clean_file, no_domain_file
 
 
+
+
 '''
     save intent to index table
 '''
 def label2idx_save(args_pre):
     intents = set()
-    for split in ["raw_train_file", "raw_valid_file"]:
-        dataset_path = Path(f"./data/{split}.json")
+    for split in ["train", "eval"]:
+        dataset_path = Path(f"./data/news/{split}.json")
         dataset = json.loads(dataset_path.read_text())
 
         intents.update({instance["source_domain"] for instance in dataset})
@@ -89,6 +91,7 @@ if __name__ == "__main__":
 
 
     train_file, valid_file = load_json_file(args_pre.train_file), load_json_file(args_pre.valid_file)
+
 
     ## label json
     train_file_, valid_file_ = label_json(train_file), label_json(valid_file)#, label_json(test_file)

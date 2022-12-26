@@ -6,13 +6,18 @@ from pathlib import Path
 from dataclasses import dataclass, field
 from typing import Optional
 
-'''
-    There are 14087 raw data
-    There are 9520 clean file
-    Counter({'forex': 5423, 'estate': 1198, 'stock': 810, 'material': 788, 'system': 604, 'crypto': 240, 'fund': 173, 'bond': 121, 'future': 91, 'gold': 72})
-    There are 8568 train_file data
-    There are 952 valid_file data
-'''
+task_to_keys = {
+    "cola": ("sentence", None),
+    "mnli": ("premise", "hypothesis"),
+    "mrpc": ("sentence1", "sentence2"),
+    "qnli": ("question", "sentence"),
+    "qqp": ("question1", "question2"),
+    "rte": ("sentence1", "sentence2"),
+    "sst2": ("sentence", None),
+    "stsb": ("sentence1", "sentence2"),
+    "wnli": ("sentence1", "sentence2"),
+}
+
 
 def same_seeds(seed):
     torch.manual_seed(seed)
@@ -34,25 +39,25 @@ def parse_args_news() -> Namespace:
         "--train_file",
         type=str,
         help="Path to training file.",
-        default="./data/raw_train_file.json",
+        default="./data/news/train.json",
     )
     parser.add_argument(
         "--valid_file",
         type=str,
         help="Path to valid file.",
-        default="./data/raw_valid_file.json",
+        default="./data/news/eval.json",
     )
     parser.add_argument(
         "--test_file",
         type=str,
         help="Path to test file.",
-        default=None,
+        default="./data/news/test.json",
     )
     parser.add_argument(
         "--cache_dir",
         type=Path,
         help="Directory to the preprocessed caches.",
-        default="./cache",
+        default="./cache/news",
     )
 
     args = parser.parse_args()
@@ -70,6 +75,7 @@ class DataTrainingArguments:
 
     task_name: Optional[str] = field(
         default=None,
+        metadata={"help": "The name of the task to train on: " + ", ".join(task_to_keys.keys())},
     )
     dataset_name: Optional[str] = field(
         default=None, metadata={"help": "The name of the dataset to use (via the datasets library)."}
@@ -126,23 +132,27 @@ class DataTrainingArguments:
         },
     )
     train_file: Optional[str] = field(
-        default='./cache/glue_train.json', 
+        default='./cache/news/glue_train.json', 
         metadata={"help": "A csv or a json file containing the training data."}
     )
     validation_file: Optional[str] = field(
-        default='./cache/glue_valid.json', 
+        default='./cache/news/glue_valid.json', 
         metadata={"help": "A csv or a json file containing the validation data."}
     )
     test_file: Optional[str] = field(default=None, metadata={"help": "A csv or a json file containing the test data."})
-    encoded_test_file: Optional[str] = field(default='./cache/ecoded_test_file', metadata={"help": "test file got encoded to glue."})
+    encoded_test_file: Optional[str] = field(default='./cache/news/ecoded_test_file', metadata={"help": "test file got encoded to glue."})
     
     pred_file: str = field(
-        default='./cache/pred_news.csv',
+        default='./cache/news/pred_news.csv',
         metadata={"help": "Will enable to load a pretrained model whose head dimensions are different."},
     )
     # './cache/intent/glue_test.json'
     def __post_init__(self):
-        if self.dataset_name is not None:
+        if self.task_name is not None:
+            self.task_name = self.task_name.lower()
+            if self.task_name not in task_to_keys.keys():
+                raise ValueError("Unknown task, you should pick one in " + ",".join(task_to_keys.keys()))
+        elif self.dataset_name is not None:
             pass
         elif self.train_file is None or self.validation_file is None:
             raise ValueError("Need either a GLUE task, a training/validation file or a dataset name.")
@@ -176,7 +186,7 @@ class ModelArguments:
         metadata={"help": "Whether to use one of the fast tokenizer (backed by the tokenizers library) or not."},
     )
     cache_dir: Optional[Path] = field(
-        default='./cache',
+        default='./cache/news',
         metadata={"help": "Where do you want to store the pretrained models downloaded from huggingface.co"},
     )
     model_revision: str = field(

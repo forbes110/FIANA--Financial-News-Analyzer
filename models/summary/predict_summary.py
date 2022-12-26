@@ -30,10 +30,9 @@ from transformers import (
     SchedulerType,
     get_scheduler,
 )
-from transformers.utils import check_min_version, get_full_repo_name, is_offline_mode, send_example_telemetry
-from utils.config import parse_args_summary
-from prepare_dataset import load_jsonlines_file, save_json
-from transformers.optimization import Adafactor
+from transformers.optimization import Adafactor, AdafactorSchedule
+from transformers.utils import check_min_version, get_full_repo_name, is_offline_mode
+from utils.config import parse_args_summary, summarization_name_mapping
 
 
 logger = get_logger(__name__)
@@ -58,6 +57,7 @@ def main():
         accelerator_log_kwargs["logging_dir"] = args.output_dir
 
     accelerator = Accelerator(gradient_accumulation_steps=args.gradient_accumulation_steps, **accelerator_log_kwargs)
+
 
     ## Make one log on every process with the configuration for debugging.
     logging.basicConfig(
@@ -97,21 +97,20 @@ def main():
 
 
     if args.dataset_name is not None:
-
         ## Downloading and loading a dataset from the hub.
         raw_datasets = load_dataset(args.dataset_name, args.dataset_config_name)
     else:
-        ''' jsonl need to be modified to json'''
+        ''' need to be modified '''
         data_files = {}
+    
         if args.test_file is not None:
-            # _test_file = load_jsonlines_file(args.test_file)
-            # save_json(args._test_file, _test_file)
             data_files["test"] = args.test_file
+        
         ## the file type
         extension = args.test_file.split(".")[-1]
         raw_datasets = load_dataset(extension, data_files=data_files)
 
-
+    ## Load pretrained model and tokenizer
     if args.config_name:
         config = AutoConfig.from_pretrained(args.config_name)
     elif args.model_name_or_path:
@@ -140,8 +139,6 @@ def main():
         logger.info("Training new model from scratch")
         model = AutoModelForSeq2SeqLM.from_config(config)
 
-    ## We resize the embeddings only when necessary to avoid index errors. If you are creating a model from scratch
-    ## on a small vocab and want a smaller embedding size, remove this test.
     embedding_size = model.get_input_embeddings().weight.shape[0]
     if len(tokenizer) > embedding_size:
         model.resize_token_embeddings(len(tokenizer))
@@ -156,6 +153,7 @@ def main():
 
     ## Get the column names for input/target.
     dataset_columns = ["maintext"]
+
     if args.text_column is None:
         text_column = dataset_columns[0] if dataset_columns is not None else column_names[0]
     else:
@@ -193,13 +191,11 @@ def main():
     for index in random.sample(range(len(test_dataset)), 1):
         logger.info(f"Sample {index} of the training set: {test_dataset[index]}.")
 
-
     data_collator = DataCollatorForSeq2Seq(
         tokenizer,
         model=model,
         pad_to_multiple_of=8 if accelerator.use_fp16 else None,
     )
-
 
     def postprocess_text(preds):
         preds = [pred.strip() for pred in preds]
@@ -285,8 +281,6 @@ def main():
         "repetition_penalty": args.repetition_penalty,
         "no_repeat_ngram_size": args.no_repeat_ngram_size,
     }
-
-
     preds = []
     for epoch, batch in enumerate(tqdm(test_dataloader, total=len(test_dataloader), position=0, leave=True, ncols=100)):
         with torch.no_grad():
@@ -300,7 +294,7 @@ def main():
                 generated_tokens, dim=1, pad_index=tokenizer.pad_token_id
             )
 
-            generated_tokens = accelerator.gather_for_metrics(generated_tokens)
+            # generated_tokens = accelerator.gather_for_metrics(generated_tokens)
             generated_tokens = generated_tokens.cpu().numpy()
 
             if isinstance(generated_tokens, tuple):
@@ -309,13 +303,12 @@ def main():
 
             decoded_preds = postprocess_text(decoded_preds)
             preds.extend(decoded_preds)
-            
+
     with open(args.output_file, "w", encoding='utf-8') as fp:
         for i, test_id in enumerate(test_ids):
             json.dump({"title":preds[i],"id":test_id}, fp)
             fp.write('\n')
         print(f"prediction file saved at {str(Path(args.output_file).resolve())}")
-
 
 
     if args.checkpointing_steps == "epoch":
@@ -334,6 +327,7 @@ def main():
             tokenizer.save_pretrained(args.output_dir)
             if args.push_to_hub:
                 repo.push_to_hub(commit_message="End of training", auto_lfs_prune=True)
+
 
 
 if __name__ == "__main__":

@@ -30,9 +30,8 @@ from transformers import (
     SchedulerType,
     get_scheduler,
 )
-from transformers.utils import check_min_version, get_full_repo_name, is_offline_mode, send_example_telemetry
-from transformers.utils.versions import require_version
-from utils.config import parse_args_summary, summarization_name_mapping
+from transformers.utils import get_full_repo_name, is_offline_mode, send_example_telemetry
+from utils.config import parse_args_summary
 from transformers.optimization import Adafactor, AdafactorSchedule
 from utils.metrics import get_rouge
 

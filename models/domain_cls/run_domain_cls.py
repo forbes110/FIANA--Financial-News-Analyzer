@@ -49,7 +49,7 @@ def main():
 
     # Sending telemetry. Tracking the example usage helps us better allocate resources to maintain them. The
     # information sent is the one passed as arguments along with your Python/PyTorch versions.
-    send_example_telemetry("run_glue", model_args, data_args)
+    # send_example_telemetry("run_glue", model_args, data_args)
 
     # Setup logging
     logging.basicConfig(
@@ -139,10 +139,11 @@ def main():
             cache_dir=model_args.cache_dir,
             use_auth_token=True if model_args.use_auth_token else None,
         )
-    # See more about loading any type of standard or custom dataset at
-    # https://huggingface.co/docs/datasets/loading_datasets.html.
-    # print()
 
+    print('raw_datasets', raw_datasets)
+    print('raw_datasets train type', type(raw_datasets["train"][0]))
+    print('raw_datasets train 0', raw_datasets["train"][0])
+    
 
     # Trying to have good defaults here, don't hesitate to tweak to your needs.
     is_regression = raw_datasets["train"].features["label"].dtype in ["float32", "float64"]
@@ -190,7 +191,7 @@ def main():
         sentence1_key, sentence2_key = "sentence1", "sentence2"
     else:
         if len(non_label_column_names) >= 2:
-            sentence1_key, sentence2_key = non_label_column_names[:2]
+            sentence1_key, sentence2_key = non_label_column_names[2], non_label_column_names[5]
         else:
             sentence1_key, sentence2_key = non_label_column_names[0], None
 
@@ -236,6 +237,10 @@ def main():
     max_seq_length = min(data_args.max_seq_length, tokenizer.model_max_length)
 
     def preprocess_function(examples):
+        print('\nexamples:\n', examples)
+        print('\nexamples type:\n', type(examples))
+
+
         # Tokenize the texts
         args = (
             (examples[sentence1_key],) if sentence2_key is None else (examples[sentence1_key], examples[sentence2_key])

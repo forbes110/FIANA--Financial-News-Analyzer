@@ -31,7 +31,7 @@ from transformers import (
     get_scheduler,
 )
 from transformers.optimization import Adafactor, AdafactorSchedule
-from transformers.utils import check_min_version, get_full_repo_name, is_offline_mode, send_example_telemetry
+from transformers.utils import check_min_version, get_full_repo_name, is_offline_mode
 from utils.config import parse_args_summary, summarization_name_mapping
 from utils.metrics import get_rouge
 # from prepare_dataset import load_jsonlines_file, save_json
@@ -51,11 +51,6 @@ except (LookupError, OSError):
 
 def main():
     args = parse_args_summary()
-
-    ## Initialize the accelerator. We will let the accelerator handle device placement for us in this example.
-    ## If we're using tracking, we also need to initialize it here and it will by default pick up all supported trackers
-    ## in the environment
-    send_example_telemetry("run_summarization_no_trainer", args)
 
     accelerator_log_kwargs = {}
 
@@ -148,8 +143,6 @@ def main():
         logger.info("Training new model from scratch")
         model = AutoModelForSeq2SeqLM.from_config(config)
 
-    ## We resize the embeddings only when necessary to avoid index errors. If you are creating a model from scratch
-    ## on a small vocab and want a smaller embedding size, remove this test.
     embedding_size = model.get_input_embeddings().weight.shape[0]
     if len(tokenizer) > embedding_size:
         model.resize_token_embeddings(len(tokenizer))
@@ -191,15 +184,11 @@ def main():
         inputs = examples[text_column]
         targets = examples[summary_column]
 
-        ## input "summary" + article
         inputs = [prefix + inp for inp in inputs]
         model_inputs = tokenizer(inputs, max_length=args.max_source_length, padding=padding, truncation=True)
 
-        ## Tokenize targets with the `text_target` keyword argument
         labels = tokenizer(text_target=targets, max_length=max_target_length, padding=padding, truncation=True)
 
-        ## If we are padding here, replace all tokenizer.pad_token_id in the labels by -100 when we want to ignore
-        ## padding in the loss.
         if padding == "max_length" and args.ignore_pad_token_for_loss:
             labels["input_ids"] = [
                 [(l if l != tokenizer.pad_token_id else -100) for l in label] for label in labels["input_ids"]
