@@ -191,7 +191,7 @@ def main():
         sentence1_key, sentence2_key = "sentence1", "sentence2"
     else:
         if len(non_label_column_names) >= 2:
-            sentence1_key, sentence2_key = non_label_column_names[2], non_label_column_names[5]
+            sentence1_key, sentence2_key = "title", "sentence"#non_label_column_names[2], non_label_column_names[5]
         else:
             sentence1_key, sentence2_key = non_label_column_names[0], None
 
@@ -381,6 +381,40 @@ def main():
             trainer.log_metrics("eval", metrics)
             trainer.save_metrics("eval", combined if task is not None and "mnli" in task else metrics)
 
+        def idx2label_save(args_pre):
+            intent_idx_path = args_pre.cache_dir / "label2idx.json"
+            intent2idx: Dict[str, int] = json.loads(intent_idx_path.read_text())
+            _idx2label = {idx: intent for intent, idx in intent2idx.items()}
+            return _idx2label
+
+        '''
+            in the end, need to make index return to label text
+        '''
+        def idx2label(_idx2label, idx: int):  
+            return _idx2label[idx]
+
+        _idx2label = idx2label_save(model_args)
+        eval_ids = [id for id in raw_datasets["validation_matched" if data_args.task_name == "mnli" else "validation"]["id"]]
+
+        for eval_dataset, task in zip(eval_datasets, tasks):
+            # Removing the `label` columns because it contains -1 and Trainer won't like that.
+            eval_dataset = eval_dataset.remove_columns("label")
+            predictions = trainer.predict(eval_dataset, metric_key_prefix="predict").predictions
+            predictions = np.squeeze(predictions) if is_regression else np.argmax(predictions, axis=1)
+
+            output_predict_file = os.path.join(training_args.output_dir, f"predict_results_{task}.txt")
+            if trainer.is_world_process_zero():
+                # with open(output_predict_file, "w") as writer:
+                #     logger.info(f"***** Predict results {task} *****")
+                with open(data_args.output_file, 'w', newline='') as file:
+                    logger.info(f"***** Predict results *****")
+                    writer = csv.writer(file)
+                    writer.writerow(['id', 'source_domain'])
+                    for i, eval_id in enumerate(eval_ids):
+                        writer.writerow([eval_id, idx2label(_idx2label, predictions[i])])
+                    # for id, item in enumerate(predictions):
+                    #     writer.writerow([f"test-{id}", idx2label(_idx2label, item)])
+                logger.info(f"***** Predict results saved*****")
     if training_args.do_predict:
         logger.info("*** Predict ***")
 

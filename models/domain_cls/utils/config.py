@@ -136,8 +136,8 @@ class DataTrainingArguments:
     test_file: Optional[str] = field(default=None, metadata={"help": "A csv or a json file containing the test data."})
     encoded_test_file: Optional[str] = field(default='./cache/ecoded_test_file', metadata={"help": "test file got encoded to glue."})
     
-    pred_file: str = field(
-        default='./data/pred_news.csv',
+    output_file: str = field(
+        default='./pred_domnain.csv',
         metadata={"help": "Will enable to load a pretrained model whose head dimensions are different."},
     )
     # './cache/intent/glue_test.json'

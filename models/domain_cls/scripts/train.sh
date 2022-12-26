@@ -13,4 +13,5 @@ python run_domain_cls.py \
 --learning_rate 5e-5 \
 --num_train_epochs 10 \
 --output_dir ./ckpt_save \
+--output_file ./pred_domnain_1.csv \
 --overwrite_output_dir 
