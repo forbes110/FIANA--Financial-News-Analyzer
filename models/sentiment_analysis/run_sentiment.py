@@ -30,7 +30,7 @@ from transformers.trainer_utils import get_last_checkpoint
 from transformers.utils import check_min_version, send_example_telemetry
 from transformers.utils.versions import require_version
 
-from prepare_glue import load_json_file, label_json, save_json, encode_label_save
+from prepare_glue import save_json, encode_label_save
 from utils.config import DataTrainingArguments, ModelArguments
 
 
@@ -106,16 +106,17 @@ def main():
             ), "`test_file` should have the same extension (csv or json) as `train_file`."
 
             ## load test_file with json
-            test_file = load_json_file(data_args.test_file)
-            test_file_ = label_json(test_file)
+            # test_file = load_json_file(data_args.test_file)
+            # test_file_ = label_json(test_file)
 
-            ## fix the intent to index by use the same
-            intent_idx_path = model_args.cache_dir / "label2idx.json"
-            intent2idx: Dict[str, int] = json.loads(intent_idx_path.read_text())
+            # ## fix the intent to index by use the same
+            # intent_idx_path = model_args.cache_dir / "label2idx.json"
+            # intent2idx: Dict[str, int] = json.loads(intent_idx_path.read_text())
 
-            ## get in the correct form and make it as a file with path
-            test_file_ = encode_label_save(test_file_, intent2idx)
-            save_json(data_args.encoded_test_file, test_file_)
+            # ## get in the correct form and make it as a file with path
+            # test_file_ = encode_label_save(test_file_, intent2idx)
+            p_d = preprocess_data(data_args.test_file)
+            save_json(data_args.encoded_test_file, data_args.test_file)
             data_files["test"] = data_args.encoded_test_file
         else:
             raise ValueError("Need either a GLUE task or a test file for `do_predict`.")
@@ -238,10 +239,6 @@ def main():
     max_seq_length = min(data_args.max_seq_length, tokenizer.model_max_length)
 
     def preprocess_function(examples):
-        # print('\nexamples:\n', examples)
-        # print('\nexamples type:\n', type(examples))
-
-
         # Tokenize the texts
         args = (
             (examples[sentence1_key],) if sentence2_key is None else (examples[sentence1_key], examples[sentence2_key])
