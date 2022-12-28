@@ -2,7 +2,7 @@
 python run_domain_cls.py \
     --do_train \
     --do_eval \
-    --model_name_or_path luhua/chinese_pretrain_mrc_macbert_large \
+    --model_name_or_path hfl/chinese-roberta-wwm-ext-large \
     --max_seq_length 128 \
     --per_device_train_batch_size 4 \
     --gradient_accumulation_steps 8 \
@@ -11,5 +11,5 @@ python run_domain_cls.py \
     --learning_rate 5e-5 \
     --num_train_epochs 5 \
     --output_dir ./ckpt_save \
-    --output_file ./pred_domnain_1.csv \
+    --output_file ./result/pred_domnain_5.csv \
     --overwrite_output_dir
