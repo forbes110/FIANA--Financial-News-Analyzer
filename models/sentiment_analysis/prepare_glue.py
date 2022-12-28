@@ -1,3 +1,4 @@
+# coding=utf8
 '''
     {
         "id": {generate},
@@ -5,3 +6,23 @@
         "label": 0
     },
 '''
+
+import pandas as pd
+from opencc import OpenCC
+import json
+
+converter = OpenCC('s2t')
+raw_data = pd.read_csv("./data/raw_data.csv", encoding="utf-8")
+text = raw_data["text"]
+label = raw_data['label']
+
+processed_data = []
+for e, i in enumerate(text):
+    dic = {
+        "id": e,
+        "sentence": i,
+        "label": str(label[e])
+    }
+    processed_data.append(dic)
+    
+converted_json = json.dump(processed_data, open("./data/processed_data.json", 'w', encoding='utf-8'), indent=4, ensure_ascii=False)
