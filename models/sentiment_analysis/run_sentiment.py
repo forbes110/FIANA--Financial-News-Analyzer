@@ -186,14 +186,15 @@ def main():
     )
 
 
-    non_label_column_names = [name for name in raw_datasets["train"].column_names if name != "label"]
-    if "sentence1" in non_label_column_names and "sentence2" in non_label_column_names:
-        sentence1_key, sentence2_key = "sentence1", "sentence2"
-    else:
-        if len(non_label_column_names) >= 2:
-            sentence1_key, sentence2_key = non_label_column_names[2], non_label_column_names[5]
-        else:
-            sentence1_key, sentence2_key = non_label_column_names[0], None
+    # non_label_column_names = [name for name in raw_datasets["train"].column_names if name != "label"]
+
+    # if "sentence1" in non_label_column_names and "sentence2" in non_label_column_names:
+    #     sentence1_key, sentence2_key = "sentence1", "sentence2"
+    # else:
+    #     if len(non_label_column_names) >= 2:
+    #         sentence1_key, sentence2_key = non_label_column_names[2], non_label_column_names[5]
+        # else:
+    sentence1_key, sentence2_key = 'sentence', None
 
     # Padding strategy
     if data_args.pad_to_max_length:

@@ -20,36 +20,36 @@ def same_seeds(seed):
 
 
 
-def parse_args_news() -> Namespace:
-    parser = ArgumentParser()
+# def parse_args_news() -> Namespace:
+#     parser = ArgumentParser()
 
-    parser.add_argument(
-        "--train_file",
-        type=str,
-        help="Path to training file.",
-        default="./cache/raw_train_file.json",
-    )
-    parser.add_argument(
-        "--valid_file",
-        type=str,
-        help="Path to valid file.",
-        default="./cache/raw_valid_file.json",
-    )
-    parser.add_argument(
-        "--test_file",
-        type=str,
-        help="Path to test file.",
-        default=None,
-    )
-    parser.add_argument(
-        "--cache_dir",
-        type=Path,
-        help="Directory to the preprocessed caches.",
-        default="./cache",
-    )
+#     parser.add_argument(
+#         "--train_file",
+#         type=str,
+#         help="Path to training file.",
+#         default="./cache/raw_train_file.json",
+#     )
+#     parser.add_argument(
+#         "--valid_file",
+#         type=str,
+#         help="Path to valid file.",
+#         default="./cache/raw_valid_file.json",
+#     )
+#     parser.add_argument(
+#         "--test_file",
+#         type=str,
+#         help="Path to test file.",
+#         default=None,
+#     )
+#     parser.add_argument(
+#         "--cache_dir",
+#         type=Path,
+#         help="Directory to the preprocessed caches.",
+#         default="./cache",
+#     )
 
-    args = parser.parse_args()
-    return args
+#     args = parser.parse_args()
+#     return args
 
 @dataclass
 class DataTrainingArguments:
@@ -119,18 +119,18 @@ class DataTrainingArguments:
         },
     )
     train_file: Optional[str] = field(
-        default='./data/glue_train.json', 
+        default='./data/train_file.json', 
         metadata={"help": "A csv or a json file containing the training data."}
     )
     validation_file: Optional[str] = field(
-        default='./data/glue_valid.json', 
+        default='./data/valid_file.json', 
         metadata={"help": "A csv or a json file containing the validation data."}
     )
     test_file: Optional[str] = field(default=None, metadata={"help": "A csv or a json file containing the test data."})
     encoded_test_file: Optional[str] = field(default='./cache/ecoded_test_file', metadata={"help": "test file got encoded to glue."})
     
     pred_file: str = field(
-        default='./data/pred_news.csv',
+        default='./data/pred_news.file',
         metadata={"help": "Will enable to load a pretrained model whose head dimensions are different."},
     )
     # './cache/intent/glue_test.json'

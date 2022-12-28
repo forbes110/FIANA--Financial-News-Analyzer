@@ -8,21 +8,44 @@
 '''
 
 import pandas as pd
-from opencc import OpenCC
 import json
+from sklearn.model_selection import train_test_split
+from typing import *
 
-converter = OpenCC('s2t')
-raw_data = pd.read_csv("./data/raw_data.csv", encoding="utf-8")
-text = raw_data["text"]
-label = raw_data['label']
+def save_json(path, data):
+    json.dump(data, open(path, 'w',encoding='utf-8'), indent=4, ensure_ascii=False)
 
-processed_data = []
-for e, i in enumerate(text):
-    dic = {
-        "id": e,
-        "sentence": i,
-        "label": str(label[e])
-    }
-    processed_data.append(dic)
-    
-converted_json = json.dump(processed_data, open("./data/processed_data.json", 'w', encoding='utf-8'), indent=4, ensure_ascii=False)
+def preprocess_data(path:str) -> List[Dict]:
+    raw_data = pd.read_csv("./data/raw_data.csv", encoding="utf-8")
+    text = raw_data["text"]
+    label = raw_data['label']
+    processed_data = []
+    for e, i in enumerate(text):
+        if type(i) == str:
+            dic = {
+                "id": e,
+                "sentence": i,
+                "label": str(label[e])
+            }
+            processed_data.append(dic)
+    return processed_data
+
+def load_json_file(file_path):
+    with open(file_path, 'r', encoding='utf-8') as f:
+        return json.load(f)
+def split_data(p_d):
+    label = []
+    for doc in p_d:
+        label.append(doc["label"])
+    train_test_split(p_d, label, test_size=0.1, random_state=42, stratify=label)
+    train_file, valid_file, _, _ = train_test_split(p_d, label, test_size=0.1, random_state=42, stratify=label)
+    return train_file, valid_file, _, _
+
+
+if __name__ == '__main__':
+    p_d = preprocess_data("./data/raw_data.csv")
+    # print()
+    train_file, valid_file, _, _ = split_data(p_d)
+    save_json("./data/train_file.json", train_file)
+    save_json("./data/valid_file.json", valid_file)
+
