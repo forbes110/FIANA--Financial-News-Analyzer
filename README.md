@@ -1,5 +1,5 @@
 # Financial-News-Analyzer
-    
+https://docs.google.com/presentation/d/1MrggsmGkW7pWa5fhywEjvF4IK-M2pjVGCfRpWrPOH2s/edit?fbclid=IwAR1VIfE13mFQsOCXklVwMnRCOgwECeWPHaLH2ogaXnaDkQ9zlKL1_ZU-pD8#slide=id.g1c267dd6f93_2_268
 
 ## Coding style
 1. add this comment above each class and function definition to make others easy to understand.  
