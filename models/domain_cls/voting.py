@@ -44,10 +44,7 @@ def main():
                 ids.append(int(row[0]))
                 labels.append(label2index(_label2index,row[1]))
             results.append((ids,labels))
-    print(len(results))
-
-    for ins in results:
-        print(compute_accuracy(ins[1],groundtruth_label))
+            print(f"{filename}: {compute_accuracy(labels,groundtruth_label)}")
     
     print("--voting result--")
     voted = []
@@ -57,7 +54,7 @@ def main():
             agg.append(ins[1][cnt])
         voted.append(results[4][1][cnt] if results[0][1][cnt]==results[1][1][cnt]==results[2][1][cnt]==results[4][1][cnt] else results[3][1][cnt])
     print(compute_accuracy(voted,groundtruth_label))
-    #print(metrics.classification_report(y_validate, predicted_res))
+    print(metrics.classification_report(voted, groundtruth_label))
 
 
 if __name__ == "__main__":
