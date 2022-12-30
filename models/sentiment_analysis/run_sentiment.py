@@ -30,7 +30,7 @@ from transformers.trainer_utils import get_last_checkpoint
 from transformers.utils import check_min_version, send_example_telemetry
 from transformers.utils.versions import require_version
 
-from prepare_glue import save_json, encode_label_save
+from prepare_glue import save_json, preprocess_data
 from utils.config import DataTrainingArguments, ModelArguments
 
 

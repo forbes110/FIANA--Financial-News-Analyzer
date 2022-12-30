@@ -11,12 +11,13 @@ import pandas as pd
 import json
 from sklearn.model_selection import train_test_split
 from typing import *
+import csv
 
 def save_json(path, data):
     json.dump(data, open(path, 'w',encoding='utf-8'), indent=4, ensure_ascii=False)
 
 def preprocess_data(path:str) -> List[Dict]:
-    raw_data = pd.read_csv("./data/raw_data.csv", encoding="utf-8")
+    raw_data = pd.read_csv(path, encoding="utf-8")
     text = raw_data["text"]
     label = raw_data['label']
     processed_data = []
@@ -43,8 +44,26 @@ def split_data(p_d):
 
 
 if __name__ == '__main__':
-    p_d = preprocess_data("./data/raw_data.csv")
-    # print()
+    # raw_data = pd.read_csv("./data/raw.txt", encoding="utf-8")
+
+    labels = []
+    texts = []
+    with open("./data/raw.txt", "r") as f:
+        for i, line in enumerate(f.readlines()):
+            if line[1] == ',' and (line[0] == '0' or line[0] == '1'):
+                labels.append(line[0])
+                if line[2] == '"':
+                    line += '"'
+                texts.append(line[2:])
+    with open("./data/raw_.csv", "w") as f:
+        writer = csv.writer(f)
+        writer.writerow(['label', 'text'])
+
+        for l, t in zip(labels, texts):
+            writer.writerow((l, t))
+
+    p_d = preprocess_data("./data/raw_.csv")
+    # # print()
     train_file, valid_file, _, _ = split_data(p_d)
     save_json("./data/train_file.json", train_file)
     save_json("./data/valid_file.json", valid_file)
