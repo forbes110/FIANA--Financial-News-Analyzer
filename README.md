@@ -1,65 +1,89 @@
 # Financial-News-Analyzer
 slides: https://docs.google.com/presentation/d/1MrggsmGkW7pWa5fhywEjvF4IK-M2pjVGCfRpWrPOH2s/edit?fbclid=IwAR1VIfE13mFQsOCXklVwMnRCOgwECeWPHaLH2ogaXnaDkQ9zlKL1_ZU-pD8#slide=id.g1c267dd6f93_2_268
 
-## Coding style
-1. add this comment above each class and function definition to make others easy to understand.  
-2. import typing to mark the return type.
-```
-'''
-    function: crawl text or model for what
-    input: input variables, types and what it is for
-    output: return output, types and what it is for
-'''
-```
-
-3. add "##" for complex variables or implemention details.  
-4. and "#" is for temporary comments like test the function, would be deleted afterwards.  
-5. add newline after a specific code part
-```
-## this is created for ...
-# try this
-```
-
- for example:
-```
-# this one need pip install
-import translators as ts
-from typing import str
 
 
-def translate_en2tw(phrase) -> str:
-    '''
-        function: api for translating english phrase to taiwanese
-        input: str, the english phrase need to be translated
-        output: str, the translated sentences in taiwanese
-    '''
-    return ts.google(phrase, from_language='en', to_language='zh-TW')
+## Financial News Summary Generation with T5 model
+    this is summary task with T5 model for financial corpus, only for chinese language.
+    在中文財經文本上訓練的summary T5 model
+read the report here: https://docs.google.com/document/d/1MjdgkyRjzXmGEukVv7WHpbQG32B72nX_FDxfn5nicFk/edit?fbclid=IwAR2p-qPo7D26mZx96BzmDrDvfrR-MjR1vNgZE0NNGtnuNSLhrji9IrJbec4#
+read the slides here:
+https://docs.google.com/presentation/d/1mFT1yCRMp5oZPPCGzji6Gr_zp60pLIAbSbuLpKT_IMs/edit?fbclid=IwAR0Jl9db8Cv8GD5NfXsQ6ECDR4SPewVdxqBwL_GczlIHmdXVQGgre3c6kEA#slide=id.g180ad59962f_5_561
 
-## check the translation result
-phrase = 'The quick brown fox jumps over the lazy dog.'
-print(translate_en2tw(phrase))
 
+## To run this code
+
+### requirements
+```shell
+torch==1.12.1
+transformers==4.22.2
+datasets
+accelerate
+sentencepiece
+rouge
+spacy
+nltk
+ckiptagger
+tqdm
+pandas
+numpy
+jsonlines
+evaluate
+rouge_score
 ```
-## Environment
-when you use packages not in requirements.txt, add the package names into 'requirements.txt' and push to guthub to make sure everyone is in the same environment.  
-install requirements to ensure you can use all packages in this project
-```
-pip install -r requirements.txt
-```
-you can also build a virtual environment for this project
-```
-python -m venv dla-env
 
-## if Unix, activate like this
-source dla-env/bin/activate
 
-## if Windows
-dla-env\Scripts\activate.bat
-
-## install
-pip install -r requirements.txt
-
-## deactivate to return to your own env
-deactivate
-    
+### Download file required and environment settings
+```shell
+bash scripts/download.sh
 ```
+
+### Train
+you could see the code details in train_summary.py.
+Evaluation is included.
+
+```shell
+bash scripts/train.sh
+```
+### Evaluation
+if you need only evaluation without training, use this script.
+```shell
+bash scripts/eval.sh
+```
+### Evaluation with different decoder algs
+```shell
+## e.g. bash strategies/beam/beam6/eval.sh
+bash strategies/{strategy}/eval.sh
+```
+
+### Inference
+only to inference(predict)
+```shell
+bash scripts/predict.sh ./path/to/test_file ./path/to/output_file
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
