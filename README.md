@@ -4,13 +4,6 @@ slides: https://docs.google.com/presentation/d/1MrggsmGkW7pWa5fhywEjvF4IK-M2pjVG
 
 
 ## 1. Summary Generation with T5 model
-    this is summary task with T5 model for financial corpus, only for chinese language.
-    在中文財經文本上訓練的summary T5 model
-read the report here: https://docs.google.com/document/d/1MjdgkyRjzXmGEukVv7WHpbQG32B72nX_FDxfn5nicFk/edit?fbclid=IwAR2p-qPo7D26mZx96BzmDrDvfrR-MjR1vNgZE0NNGtnuNSLhrji9IrJbec4#
-read the slides here:
-https://docs.google.com/presentation/d/1mFT1yCRMp5oZPPCGzji6Gr_zp60pLIAbSbuLpKT_IMs/edit?fbclid=IwAR0Jl9db8Cv8GD5NfXsQ6ECDR4SPewVdxqBwL_GczlIHmdXVQGgre3c6kEA#slide=id.g180ad59962f_5_561
-
-
 ## To run this code
 
 ### requirements
