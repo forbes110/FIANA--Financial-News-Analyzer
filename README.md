@@ -62,3 +62,5 @@ only to inference(predict)
 ```shell
 bash scripts/predict.sh ./path/to/test_file ./path/to/output_file
 ```
+
+## 2. Sentiment Analysis
