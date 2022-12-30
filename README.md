@@ -1,4 +1,4 @@
-# Financial-News-Analyzer
+# Financial-News-Analyzer with Transfer Learning
 slides: https://docs.google.com/presentation/d/1MrggsmGkW7pWa5fhywEjvF4IK-M2pjVGCfRpWrPOH2s/edit?fbclid=IwAR1VIfE13mFQsOCXklVwMnRCOgwECeWPHaLH2ogaXnaDkQ9zlKL1_ZU-pD8#slide=id.g1c267dd6f93_2_268
         藉由預訓練模型來幫助投資消息面,包括三項任務, 1. summarizationm 2. sentiment analysis 3. domain classification
 
@@ -64,6 +64,7 @@ bash scripts/predict.sh ./path/to/test_file ./path/to/output_file
 ```
 
 ## 2. Sentiment Analysis
+Need more correct data to enhance the result, this is still need more revision(dataset correctness).
 ### Download file required and environment settings
 ```shell
 bash scripts/download.sh
@@ -71,4 +72,22 @@ bash scripts/download.sh
 ### Train with Evaluation
 ```shell
 bash scripts/train.sh
+```
+
+## 3. Domain Classification
+Need more correct data to enhance the result, this is still need more revision(for multi-label issues).
+
+### Download file required and environment settings
+```shell
+bash scripts/download.sh
+```
+### Train with Evaluation
+```shell
+bash scripts/train.sh
+```
+
+### Inference
+only to inference(predict)
+```shell
+bash scripts/predict.sh ./path/to/test_file ./path/to/output_file
 ```
