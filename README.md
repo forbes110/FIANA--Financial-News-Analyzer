@@ -30,6 +30,7 @@ numpy
 jsonlines
 evaluate
 rouge_score
+opencc
 ```
 
 
