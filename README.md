@@ -64,3 +64,11 @@ bash scripts/predict.sh ./path/to/test_file ./path/to/output_file
 ```
 
 ## 2. Sentiment Analysis
+### Download file required and environment settings
+```shell
+bash scripts/download.sh
+```
+### Train with Evaluation
+```shell
+bash scripts/train.sh
+```
