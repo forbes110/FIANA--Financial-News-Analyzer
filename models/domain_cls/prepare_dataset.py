@@ -37,7 +37,7 @@ def split_data(clean_file):
     for doc in clean_file:
         label.append(doc["source_domain"])
 
-    print(Counter(label))
+    # print(Counter(label))
 
     train_file, valid_file, _, _ = train_test_split(clean_file, label, test_size=0.1, random_state=42, stratify=label)
         
