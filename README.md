@@ -57,7 +57,7 @@ bash scripts/predict.sh ./path/to/test_file ./path/to/output_file
 ```
 
 ## 2. Sentiment Analysis
-Need more correct data to enhance the result, this is still need more revision(dataset correctness).
+Need more correct data to enhance the result, this is still need more revision(dataset correctness), you could check that in our paper.
 ### Download file required and environment settings
 ```shell
 bash scripts/download.sh
@@ -68,7 +68,7 @@ bash scripts/train.sh
 ```
 
 ## 3. Domain Classification
-Need more correct data to enhance the result, this is still need more revision(for multi-label issues).
+Need more correct data to enhance the result, this is still need more revision(for multi-label issues), you could check that in our paper.
 
 ### Download file required and environment settings
 ```shell
@@ -80,7 +80,7 @@ bash scripts/train.sh
 ```
 
 ### Inference
-only to inference(predict)
+only to inference(predict), this task doesn't provide model weight, need to train first to do inference here.
 ```shell
 bash scripts/predict.sh ./path/to/test_file ./path/to/output_file
 ```
