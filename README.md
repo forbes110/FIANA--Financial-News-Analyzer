@@ -3,7 +3,7 @@ slides: https://docs.google.com/presentation/d/1MrggsmGkW7pWa5fhywEjvF4IK-M2pjVG
         藉由預訓練模型來幫助投資消息面,包括三項任務, 1. summarizationm 2. sentiment analysis 3. domain classification
 
 
-## Financial News Summary Generation with T5 model
+## 1. Summary Generation with T5 model
     this is summary task with T5 model for financial corpus, only for chinese language.
     在中文財經文本上訓練的summary T5 model
 read the report here: https://docs.google.com/document/d/1MjdgkyRjzXmGEukVv7WHpbQG32B72nX_FDxfn5nicFk/edit?fbclid=IwAR2p-qPo7D26mZx96BzmDrDvfrR-MjR1vNgZE0NNGtnuNSLhrji9IrJbec4#
