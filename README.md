@@ -1,11 +1,6 @@
 # Financial-News-Analyzer with Transfer Learning
         藉由預訓練模型來協助快速掌握投資消息面,包括三項任務, 1. summarizationm 2. sentiment analysis 3. domain classification
 slides: https://docs.google.com/presentation/d/1MrggsmGkW7pWa5fhywEjvF4IK-M2pjVGCfRpWrPOH2s/edit?fbclid=IwAR1VIfE13mFQsOCXklVwMnRCOgwECeWPHaLH2ogaXnaDkQ9zlKL1_ZU-pD8#slide=id.g1c267dd6f93_2_268 
-
-
-## 1. Summary Generation with T5 model
-## To run this code
-
 ### requirements
 ```shell
 torch==1.12.1
@@ -24,7 +19,10 @@ jsonlines
 evaluate
 rouge_score
 opencc
+
 ```
+## 1. Summary Generation with T5 model
+## To run this code
 
 
 ### Download file required and environment settings
