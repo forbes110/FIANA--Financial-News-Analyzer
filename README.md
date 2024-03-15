@@ -2,7 +2,7 @@
         藉由預訓練模型來協助快速掌握投資消息面,包括三項任務, 1. summarizationm 2. sentiment analysis 3. domain classification
 slides: https://docs.google.com/presentation/d/1MrggsmGkW7pWa5fhywEjvF4IK-M2pjVGCfRpWrPOH2s/edit?fbclid=IwAR1VIfE13mFQsOCXklVwMnRCOgwECeWPHaLH2ogaXnaDkQ9zlKL1_ZU-pD8#slide=id.g1c267dd6f93_2_268 
 
-paper: https://docs.google.com/document/d/1Dez2rIl1ZR2WMM4oGjCIdxL8aC8IPgns/edit?fbclid=IwAR3bxsKcq6FNnocTo4V6nqusl8dGRYtzPSkHET_Rfmh3wUH5nkxxfIguz9s#heading=h.xwyv77q7cuw
+Here is the detail: https://www.dropbox.com/scl/fi/8ubber3p4m3etutcaj7vr/Financial-News.pdf?rlkey=72f4olz8mk55ypr44l3o98yv6&dl=1
 ## To run this code
 ### requirements
 ```shell
