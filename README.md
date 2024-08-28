@@ -1,4 +1,4 @@
-# Financial-News-Analyzer with Transfer Learning
+# FIANA: Financial-News-Analyzer with Transfer Learning
 Apply pre-trained models to help quickly grasp investment news, including three tasks, 1. summarizationm 2. sentiment analysis 3. domain classification
 slides: https://docs.google.com/presentation/d/1MrggsmGkW7pWa5fhywEjvF4IK-M2pjVGCfRpWrPOH2s/edit?fbclid=IwAR1VIfE13mFQsOCXklVwMnRCOgwECeWPHaLH2ogaXnaDkQ9zlKL1_ZU-pD8#slide=id.g1c267dd6f93_2_268 
 
